@@ -1,0 +1,52 @@
+---
+const sortableColumns = [
+  { key: 'nombres', label: 'Nombre Completo' },
+  { key: 'documento', label: 'Documento' },
+  { key: 'expedicion', label: 'Expedición' },
+  { key: 'cargo', label: 'Cargo Laboral ' },
+  { key: 'fechaInicio', label: 'F. Inicio' },
+  { key: 'fechaFinalizacion', label: 'F. Fin' },
+  { key: 'mesesDuracion', label: 'Duración' },
+  { key: 'consecutivo', label: 'Consecutivo' }
+]
+
+const sortIcon =
+  'M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13-6L16.5 19m0 0L12 14.5m4.5 4.5V7.5'
+---
+
+<div class="table-wrapper">
+  <table class="data-table">
+    <thead>
+      <tr>
+        {
+          sortableColumns.map((col) => (
+            <th data-sort={col.key} onclick={`app.handleSort('${col.key}')`}>
+              <div class="th-content">
+                {col.label}
+                <svg
+                  class="sort-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d={sortIcon}
+                  />
+                </svg>
+              </div>
+            </th>
+          ))
+        }
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="student-tbody">
+      <!-- Filas dinámicas -->
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,19 @@
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3 class="modal-title">Confirmar Eliminación</h3>
+      <button class="modal-close" onclick="app.closeModal('confirm-modal')">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body" id="confirm-content">
+      <!-- Contenido dinámico -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="app.closeModal('confirm-modal')">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-accept">Eliminar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<div class="modal-overlay" id="form-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-title">Registrar Nuevo Estudiante</h3>
+      <button class="modal-close" onclick="app.closeModal('form-modal')">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="student-form" onsubmit="event.preventDefault(); app.saveStudent();">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nombres <span class="required">*</span></label>
+            <input type="text" class="form-input" id="field-nombres" placeholder="Ej: María Fernanda" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Apellidos <span class="required">*</span></label>
+            <input type="text" class="form-input" id="field-apellidos" placeholder="Ej: González Pérez" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Número de Documento <span class="required">*</span></label>
+            <input type="text" class="form-input" id="field-documento" placeholder="Ej: 1032456789" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expedición</label>
+            <input type="text" class="form-input" id="field-expedicion" placeholder="Ej: Bogotá D.C." />
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Cargo <span class="required">*</span></label>
+            <input type="text" class="form-input" id="field-cargo" placeholder="Ej: Auxiliar Administrativo" required />
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Funciones Específicas</label>
+            <textarea class="form-input" id="field-funciones" placeholder="Describe las funciones del estudiante..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha de Inicio</label>
+            <input type="date" class="form-input" id="field-fechaInicio" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha de Finalización</label>
+            <input type="date" class="form-input" id="field-fechaFinalizacion" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Meses de Duración</label>
+            <input type="number" class="form-input" id="field-mesesDuracion" placeholder="Ej: 6" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Número Consecutivo (nuevo registro: solo el número, se guarda como CF1222-N)</label>
+            <input type="text" class="form-input" id="field-consecutivo" placeholder="Ej: 1" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="app.closeModal('form-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="app.saveStudent()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>

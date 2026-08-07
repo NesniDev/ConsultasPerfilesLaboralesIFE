@@ -1,11 +1,36 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from '../layouts/Layout.astro'
+import Navbar from '../components/Navbar.astro'
+import PageHeader from '../components/PageHeader.astro'
+import StatsCards from '../components/StatsCards.astro'
+import RegistrosCard from '../components/RegistrosCard.astro'
+import StudentFormModal from '../components/modals/StudentFormModal.astro'
+import StudentDetailModal from '../components/modals/StudentDetailModal.astro'
+import ConfirmModal from '../components/modals/ConfirmModal.astro'
+import ToastContainer from '../components/ToastContainer.astro'
+import '../styles/dashboard.css'
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="IFE · Panel de Perfiles Laborales">
+  <div class="app-shell">
+    <PageHeader />
+
+    <main class="page-content">
+      <StatsCards />
+      <RegistrosCard />
+    </main>
+
+    <footer class="app-footer">
+      <p>Consultas Perfiles Laborales IFE v1.0</p>
+    </footer>
+  </div>
+
+  <StudentFormModal />
+  <StudentDetailModal />
+  <ConfirmModal />
+  <ToastContainer />
+
+  <script is:inline src="/scripts/api.js"></script>
+  <script is:inline src="/scripts/store.js"></script>
+  <script is:inline src="/scripts/app.js"></script>
 </Layout>

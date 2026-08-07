@@ -1,0 +1,65 @@
+---
+interface Props {
+  eyebrow?: string
+  title?: string
+  subtitle?: string
+}
+
+const {
+  eyebrow = 'Panel Administrativo',
+  subtitle = 'Gestión de perfiles laborales de estudiantes'
+} = Astro.props
+---
+
+<header class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-brand">
+      <img src="/LOGO-IFE.png" alt="Logo IFE" class="page-header-logo" />
+      <div class="page-header-text">
+        <span class="page-header-eyebrow">{eyebrow}</span>
+        <p class="page-header-subtitle">{subtitle}</p>
+      </div>
+    </div>
+    <div class="page-header-actions">
+      <div class="topbar-search">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+          ></path>
+        </svg>
+        <input
+          type="text"
+          id="global-search"
+          placeholder="Buscar por documento, nombre o cargo..."
+          oninput="app.handleSearch(this.value)"
+        />
+      </div>
+      <div class="page-header-buttons">
+        <button class="header-btn" onclick="app.exportCSV()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+            ></path>
+          </svg>
+          Exportar
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

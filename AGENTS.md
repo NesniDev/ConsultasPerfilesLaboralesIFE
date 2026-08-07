@@ -18,18 +18,33 @@ npm run preview      # preview production build
 
 ```
 src/
-  pages/index.astro     # single page — full dashboard UI
-  layouts/Layout.astro  # HTML shell, meta, fonts, global reset
-  styles/dashboard.css  # all component styles (~650 lines)
-  scripts/app.js        # NOT served — copy to public/scripts/ after edits
-  components/           # unused (default Astro template leftovers)
+  pages/index.astro        # single page — composes the dashboard sections
+  layouts/Layout.astro     # HTML shell, meta, fonts, global reset, CSS variables (:root)
+  styles/dashboard.css     # all component styles (~1270 lines)
+  scripts/app.js           # NOT served — copy to public/scripts/ after edits
+  components/
+    Navbar.astro           # top navbar: brand logo + nav links + mobile menu
+    PageHeader.astro       # gradient hero header + global search
+    StatsCards.astro       # 4 stat cards (config-driven, prop array)
+    RegistrosCard.astro    # composes FiltersBar + StudentTable + TablePagination
+    FiltersBar.astro       # filters bar — ONLY the document filter
+    StudentTable.astro     # sortable thead + empty tbody (rows rendered by app.js)
+    TablePagination.astro  # empty footer (pagination rendered by app.js)
+    ToastContainer.astro   # toast notifications container
+    modals/
+      StudentFormModal.astro  # create/edit form modal
+      StudentDetailModal.astro # detail view modal
+      ConfirmModal.astro      # delete confirmation modal
 public/
   scripts/app.js        # served client-side JS (copy of src/scripts/app.js)
+  LOGO-IFE.png          # main brand logo (used in Navbar)
 ```
 
 **Critical quirk**: `src/scripts/app.js` is NOT served by Astro. It must be copied to `public/scripts/app.js` to be available at runtime. The `index.astro` page loads it via `<script is:inline src="/scripts/app.js">`.
 
 **`is:inline` required**: The script tag referencing a public asset MUST use `is:inline` or the build fails with a Vite bundling error.
+
+**Component contracts**: `app.js` manipulates the DOM by fixed IDs (`student-tbody`, `table-footer`, `stat-*`, `field-*`, `form-modal`, `toast-container`, etc.). When editing components, keep every ID and `onclick`/`oninput` handler referenced by `app.js` intact — check `src/scripts/app.js` before removing anything.
 
 ## Node
 

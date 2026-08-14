@@ -127,9 +127,9 @@ class App {
     if (adminStats) {
       adminStats.style.display = this.isAdmin ? 'block' : 'none';
     }
-    const pageHeader = document.querySelector('.page-header');
-    if (pageHeader) {
-      pageHeader.style.display = this.isAdmin ? 'none' : 'block';
+    const headerText = document.getElementById('header-text');
+    if (headerText) {
+      headerText.style.display = this.isAdmin ? 'block' : 'none';
     }
     const adminControls = document.getElementById('admin-controls');
     if (adminControls) {

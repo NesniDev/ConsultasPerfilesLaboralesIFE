@@ -357,6 +357,80 @@ class App {
     }
   }
 
+  openChangePasswordModal() {
+    const modal = document.getElementById('change-password-modal');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeChangePasswordModal() {
+    const modal = document.getElementById('change-password-modal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      document.getElementById('change-password-form').reset();
+      document.getElementById('change-password-error').style.display = 'none';
+    }
+  }
+
+  async handleChangePassword(event) {
+    if (event) event.preventDefault();
+
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const errorDiv = document.getElementById('change-password-error');
+    const submitBtn = document.querySelector('#change-password-modal .btn-primary');
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      errorDiv.textContent = 'Por favor completa todos los campos';
+      errorDiv.style.display = 'block';
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      errorDiv.textContent = 'Las contraseñas no coinciden';
+      errorDiv.style.display = 'block';
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      errorDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+      errorDiv.style.display = 'block';
+      return;
+    }
+
+    errorDiv.style.display = 'none';
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const response = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al cambiar la contraseña');
+      }
+
+      this.closeChangePasswordModal();
+      this.showToast('Contraseña cambiadaexitosamente', 'success');
+    } catch (err) {
+      errorDiv.textContent = err.message;
+      errorDiv.style.display = 'block';
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  }
+
   async handleLogin(event) {
     if (event) event.preventDefault();
 

@@ -127,6 +127,10 @@ class App {
         loginBtn.style.display = 'inline-flex';
       }
     }
+    const adminStats = document.getElementById('admin-stats');
+    if (adminStats) {
+      adminStats.style.display = this.isAdmin ? 'block' : 'none';
+    }
   }
 
   renderAdminBadge() {

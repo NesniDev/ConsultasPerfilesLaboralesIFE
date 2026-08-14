@@ -6,8 +6,9 @@ interface Props {
 }
 
 const {
-  eyebrow = 'Consultas de Perfiles Laborales',
-  subtitle = 'Información de estudiantes en práctica'
+  eyebrow = 'Instituto para la Economía Social',
+  title = 'Registros de Estudiantes en Práctica',
+  subtitle = 'Consulta los perfiles laborales y experiencia de nuestros estudiantes'
 } = Astro.props
 ---
 
@@ -17,6 +18,7 @@ const {
       <img src="/LOGO-IFE.png" alt="Logo IFE" class="page-header-logo" />
       <div class="page-header-text">
         <span class="page-header-eyebrow">{eyebrow}</span>
+        <h1 class="page-header-title">{title}</h1>
         <p class="page-header-subtitle">{subtitle}</p>
       </div>
     </div>

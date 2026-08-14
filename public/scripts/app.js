@@ -463,12 +463,8 @@ class App {
 
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      this.user = data.user;
-      this.isAdmin = true;
       alert('¡Sesión iniciada correctamente!');
-      this.closeLoginModal();
-      this.initAuth();
-      location.reload();
+      window.location.reload();
     } catch (err) {
       alert(err.message || 'Usuario o contraseña incorrectos');
     } finally {

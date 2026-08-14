@@ -6,8 +6,8 @@ interface Props {
 }
 
 const {
-  eyebrow = 'Panel Administrativo',
-  subtitle = 'Gestión de perfiles laborales de estudiantes'
+  eyebrow = 'Consultas de Perfiles Laborales',
+  subtitle = 'Información de estudiantes en práctica'
 } = Astro.props
 ---
 
@@ -21,29 +21,8 @@ const {
       </div>
     </div>
     <div class="page-header-actions">
-      <div class="topbar-search">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="2"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-          ></path>
-        </svg>
-        <input
-          type="text"
-          id="global-search"
-          placeholder="Buscar por documento, nombre o cargo..."
-          oninput="app.handleSearch(this.value)"
-        />
-      </div>
       <div class="page-header-buttons">
-        <button class="header-btn" onclick="app.exportCSV()">
+        <button class="header-btn" onclick="app.goToLogin()" id="login-btn">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -54,10 +33,10 @@ const {
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
             ></path>
           </svg>
-          Exportar
+          Iniciar Sesión
         </button>
       </div>
     </div>

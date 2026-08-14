@@ -118,8 +118,14 @@ class App {
     if (newBtn && !this.isAdmin) {
       newBtn.style.display = 'none';
     }
-    if (this.isAdmin) {
-      this.renderAdminBadge();
+    const loginBtn = document.getElementById('login-btn');
+    if (loginBtn) {
+      if (this.isAdmin) {
+        loginBtn.style.display = 'none';
+        this.renderAdminBadge();
+      } else {
+        loginBtn.style.display = 'inline-flex';
+      }
     }
   }
 
@@ -327,10 +333,8 @@ class App {
 
   // ---- Actions ----
 
-  handleSearch(value) {
-    this.state.searchQuery = value;
-    this.state.page = 1;
-    this.renderTable();
+  goToLogin() {
+    window.location.href = '/login';
   }
 
   handleFilter(name, value) {
@@ -596,26 +600,6 @@ class App {
     document.getElementById('navbar-links')?.classList.remove('open');
   }
 
-  // ---- Export ----
-
-  exportCSV() {
-    const students = this.getFilteredStudents();
-    const headers = ['Nombres', 'Apellidos', 'Documento', 'Expedición', 'Cargo', 'Funciones', 'Fecha Inicio', 'Fecha Fin', 'Meses', 'Consecutivo'];
-    const rows = students.map((s) => [
-      s.nombres, s.apellidos, s.documento, s.expedicion, s.cargo, s.funciones,
-      s.fechaInicio, s.fechaFinalizacion, s.mesesDuracion, s.consecutivo,
-    ]);
-
-    const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `estudiantes_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    this.showToast('Archivo CSV exportado correctamente', 'success');
-  }
 
   // ---- Events ----
 

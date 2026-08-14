@@ -2,9 +2,17 @@ import crypto from 'crypto';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
+function base64Encode(str) {
+  return Buffer.from(str).toString('base64');
+}
+
+function base64Decode(str) {
+  return Buffer.from(str, 'base64').toString('utf-8');
+}
+
 export function generateJWT(payload) {
-  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const body = btoa(JSON.stringify({ ...payload, iat: Math.floor(Date.now() / 1000) }));
+  const header = base64Encode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const body = base64Encode(JSON.stringify({ ...payload, iat: Math.floor(Date.now() / 1000) }));
   const signature = crypto
     .createHmac('sha256', JWT_SECRET)
     .update(`${header}.${body}`)
@@ -21,7 +29,7 @@ export function verifyJWT(token) {
       .update(`${header}.${body}`)
       .digest('base64');
     if (signature !== expectedSignature) return null;
-    const decoded = JSON.parse(atob(body));
+    const decoded = JSON.parse(base64Decode(body));
     return decoded;
   } catch (e) {
     return null;

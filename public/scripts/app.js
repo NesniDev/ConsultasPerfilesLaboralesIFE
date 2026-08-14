@@ -441,7 +441,7 @@ class App {
     const submitBtn = event?.target?.querySelector('[type="submit"]') || document.querySelector('#login-modal .btn-primary');
 
     if (!username || !password) {
-      alert('Por favor completa todos los campos');
+      this.showToast('Por favor completa todos los campos', 'error');
       return;
     }
 
@@ -463,10 +463,10 @@ class App {
 
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      alert('¡Sesión iniciada correctamente!');
-      window.location.reload();
+      this.showToast('¡Sesión iniciada correctamente!', 'success');
+      setTimeout(() => window.location.reload(), 800);
     } catch (err) {
-      alert(err.message || 'Usuario o contraseña incorrectos');
+      this.showToast(err.message || 'Usuario o contraseña incorrectos', 'error');
     } finally {
       if (submitBtn) submitBtn.disabled = false;
     }

@@ -140,6 +140,7 @@ class App {
     this.isAdmin = false;
     this.closeLoginModal();
     this.initAuth();
+    this.render();
     this.showToast('Sesión cerrada', 'success');
   }
 

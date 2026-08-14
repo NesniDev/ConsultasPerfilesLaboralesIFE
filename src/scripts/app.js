@@ -136,7 +136,11 @@ class App {
   logout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
-    window.location.href = '/login';
+    this.user = null;
+    this.isAdmin = false;
+    this.closeLoginModal();
+    this.initAuth();
+    this.showToast('Sesión cerrada', 'success');
   }
 
   async loadData() {
@@ -380,8 +384,8 @@ class App {
       this.showToast('Sesión iniciada correctamente', 'success');
       location.reload();
     } catch (err) {
-      errorDiv.textContent = err.message;
-      errorDiv.classList.add('show');
+      this.closeLoginModal();
+      this.showToast(err.message || 'Error al iniciar sesión', 'error');
     } finally {
       if (submitBtn) submitBtn.disabled = false;
     }

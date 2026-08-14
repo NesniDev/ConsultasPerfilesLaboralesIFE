@@ -344,12 +344,12 @@ class App {
   async handleLogin(event) {
     if (event) event.preventDefault();
 
-    const email = document.getElementById('login-email').value;
+    const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
     const errorDiv = document.getElementById('login-error');
     const submitBtn = event?.target?.querySelector('[type="submit"]') || document.querySelector('#login-modal .btn-primary');
 
-    if (!email || !password) {
+    if (!username || !password) {
       errorDiv.textContent = 'Por favor completa todos los campos';
       errorDiv.classList.add('show');
       return;
@@ -362,7 +362,7 @@ class App {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();

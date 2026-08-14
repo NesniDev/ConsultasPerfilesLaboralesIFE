@@ -6,17 +6,17 @@ export const prerender = false;
 
 export async function POST({ request }) {
   try {
-    const { email, password } = await request.json();
-    console.log('Login attempt:', { email, passwordLength: password?.length });
+    const { username, password } = await request.json();
+    console.log('Login attempt:', { username, passwordLength: password?.length });
 
-    if (!email || !password) {
-      return json({ error: 'Email and password required' }, { status: 400 });
+    if (!username || !password) {
+      return json({ error: 'Username and password required' }, { status: 400 });
     }
 
     const { data: users, error } = await supabase
       .from('users')
-      .select('id, email, password_hash, role')
-      .eq('email', email)
+      .select('id, username, email, password_hash, role')
+      .eq('username', username)
       .single();
 
     console.log('User query result:', { error, userFound: !!users, email });

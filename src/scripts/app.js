@@ -110,9 +110,7 @@ class App {
   }
 
   checkAuth() {
-    if (!localStorage.getItem('authToken')) {
-      window.location.href = '/login';
-    }
+    // No forced redirect - allows public access
   }
 
   initAuth() {
@@ -120,17 +118,19 @@ class App {
     if (newBtn && !this.isAdmin) {
       newBtn.style.display = 'none';
     }
-    this.renderRoleBadge();
+    if (this.isAdmin) {
+      this.renderAdminBadge();
+    }
   }
 
-  renderRoleBadge() {
+  renderAdminBadge() {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
       const badge = document.createElement('div');
       badge.style.cssText = 'display: flex; gap: 12px; align-items: center;';
       badge.innerHTML = `
-        <span style="font-size: 12px; padding: 4px 8px; background: ${this.isAdmin ? '#3b82f6' : '#10b981'}; color: white; border-radius: 4px;">
-          ${this.isAdmin ? 'Administrador' : 'Consultor'}
+        <span style="font-size: 12px; padding: 4px 8px; background: #3b82f6; color: white; border-radius: 4px;">
+          Administrador
         </span>
         <button onclick="app.logout()" style="background: none; border: none; color: #666; cursor: pointer; font-size: 14px; padding: 0;">Cerrar sesión</button>
       `;

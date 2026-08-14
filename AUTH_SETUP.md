@@ -6,9 +6,8 @@ Copia y pega el contenido de `supabase/migrations/001_create_users_table.sql` en
 
 Esto creará:
 - Tabla `users` con columnas: id, email, password_hash, role, created_at, updated_at
-- Dos usuarios de demo:
+- Usuario admin de demo:
   - **Admin**: admin@ife.edu / password123
-  - **Consultor**: consultor@ife.edu / password123
 
 ## Paso 2: Configurar JWT_SECRET
 
@@ -25,24 +24,22 @@ Genera un valor aleatorio fuerte, ej: `openssl rand -base64 32`
 vercel env add JWT_SECRET
 ```
 
-## Paso 3: Flujo de autenticación
+## Paso 3: Flujo de acceso
 
-### Para Administrador
-1. Accede a https://consultas-perfiles-laborales-ife.vercel.app
-2. Redirigirá a `/login`
-3. Ingresa: `admin@ife.edu` / `password123`
-4. Tendrás acceso a:
-   - Ver estudiantes
+### Acceso Público
+- Link directo: https://consultas-perfiles-laborales-ife.vercel.app
+- Pueden ver: Tabla de estudiantes, detalles, búsqueda
+- NO pueden: Crear, editar, eliminar (botones ocultos)
+
+### Acceso Administrador
+1. Accede a https://consultas-perfiles-laborales-ife.vercel.app/login
+2. Ingresa: `admin@ife.edu` / `password123`
+3. Tendrás acceso a:
+   - Ver estudiantes (como público)
    - Crear nuevos registros
-   - Editar registros
+   - Editar registros existentes
    - Eliminar registros
-
-### Para Consultor
-1. Ingresa: `consultor@ife.edu` / `password123`
-2. Tendrás acceso a:
-   - Ver estudiantes
-   - Ver detalles
-   - NO puede crear, editar o eliminar
+   - Botón de cerrar sesión en navbar
 
 ## Paso 4: Crear nuevos usuarios
 

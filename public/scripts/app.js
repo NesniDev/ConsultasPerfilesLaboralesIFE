@@ -334,7 +334,68 @@ class App {
   // ---- Actions ----
 
   goToLogin() {
-    window.location.href = '/login';
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('login-email').focus();
+    }
+  }
+
+  closeLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      document.getElementById('login-form').reset();
+      document.getElementById('login-error').classList.remove('show');
+    }
+  }
+
+  async handleLogin(event) {
+    if (event) event.preventDefault();
+
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const errorDiv = document.getElementById('login-error');
+    const submitBtn = event?.target?.querySelector('[type="submit"]') || document.querySelector('#login-modal .btn-primary');
+
+    if (!email || !password) {
+      errorDiv.textContent = 'Por favor completa todos los campos';
+      errorDiv.classList.add('show');
+      return;
+    }
+
+    errorDiv.classList.remove('show');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al iniciar sesión');
+      }
+
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      this.user = data.user;
+      this.isAdmin = true;
+      this.closeLoginModal();
+      this.initAuth();
+      this.showToast('Sesión iniciada correctamente', 'success');
+      location.reload();
+    } catch (err) {
+      errorDiv.textContent = err.message;
+      errorDiv.classList.add('show');
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
   }
 
   handleFilter(name, value) {

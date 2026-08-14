@@ -1,0 +1,39 @@
+<div class="modal-overlay" id="login-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Iniciar Sesión</h3>
+      <button class="modal-close" onclick="app.closeLoginModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="login-form" onsubmit="app.handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-input" id="login-email" placeholder="admin@ife.edu" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-input" id="login-password" placeholder="••••••••" required />
+        </div>
+        <div class="login-error" id="login-error" style="display: none; background-color: #fee; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="app.closeLoginModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="app.handleLogin()">Iniciar Sesión</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .login-error {
+    display: none;
+  }
+
+  .login-error.show {
+    display: block;
+  }
+</style>

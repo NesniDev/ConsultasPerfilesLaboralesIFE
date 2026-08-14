@@ -19,33 +19,33 @@ export async function POST({ request }) {
       .eq('username', username)
       .single();
 
-    console.log('User query result:', { error, userFound: !!users, email });
+    console.log('User query result:', { error, userFound: !!users, username });
 
     if (error || !users) {
       console.log('User not found error:', error);
-      return json({ error: 'Invalid credentials' }, { status: 401 });
+      return json({ error: 'Usuario o contraseña incorrectos' }, { status: 401 });
     }
 
     const passwordMatch = await comparePassword(password, users.password_hash);
     console.log('Password match:', passwordMatch);
 
     if (!passwordMatch) {
-      return json({ error: 'Invalid credentials' }, { status: 401 });
+      return json({ error: 'Usuario o contraseña incorrectos' }, { status: 401 });
     }
 
     const token = generateJWT({
       userId: users.id,
-      email: users.email,
+      username: users.username,
       role: users.role,
     });
 
-    console.log('Login successful for:', email);
+    console.log('Login successful for:', username);
 
     return json({
       token,
       user: {
         id: users.id,
-        email: users.email,
+        username: users.username,
         role: users.role,
       },
     });

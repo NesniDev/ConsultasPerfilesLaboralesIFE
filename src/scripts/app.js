@@ -87,6 +87,8 @@ const CONSECUTIVO_PREFIX = 'CF1222-';
 
 class App {
   constructor() {
+    this.user = JSON.parse(localStorage.getItem('user') || 'null');
+    this.isAdmin = this.user?.role === 'admin';
     this.store = new StudentStore();
     this.query = null;
     this.state = {
@@ -101,8 +103,45 @@ class App {
   }
 
   async init() {
+    this.checkAuth();
+    this.initAuth();
     this.bindEvents();
     await this.loadData();
+  }
+
+  checkAuth() {
+    if (!localStorage.getItem('authToken')) {
+      window.location.href = '/login';
+    }
+  }
+
+  initAuth() {
+    const newBtn = document.querySelector('.card-header-right .btn-primary');
+    if (newBtn && !this.isAdmin) {
+      newBtn.style.display = 'none';
+    }
+    this.renderRoleBadge();
+  }
+
+  renderRoleBadge() {
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+      const badge = document.createElement('div');
+      badge.style.cssText = 'display: flex; gap: 12px; align-items: center;';
+      badge.innerHTML = `
+        <span style="font-size: 12px; padding: 4px 8px; background: ${this.isAdmin ? '#3b82f6' : '#10b981'}; color: white; border-radius: 4px;">
+          ${this.isAdmin ? 'Administrador' : 'Consultor'}
+        </span>
+        <button onclick="app.logout()" style="background: none; border: none; color: #666; cursor: pointer; font-size: 14px; padding: 0;">Cerrar sesión</button>
+      `;
+      navbar.appendChild(badge);
+    }
+  }
+
+  logout() {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
   }
 
   async loadData() {
@@ -216,12 +255,14 @@ class App {
               <button class="action-btn view" title="Ver detalles" onclick="app.viewStudent('${s.id}')">
                 ${SVG.eye}
               </button>
+              ${this.isAdmin ? `
               <button class="action-btn edit" title="Editar" onclick="app.editStudent('${s.id}')">
                 ${SVG.pencil}
               </button>
               <button class="action-btn delete" title="Eliminar" onclick="app.confirmDelete('${s.id}')">
                 ${SVG.trash}
               </button>
+              ` : ''}
             </div>
           </td>
         </tr>`;

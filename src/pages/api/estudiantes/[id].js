@@ -2,6 +2,7 @@ import { supabase } from '../../../lib/supabase.js';
 import { json } from '../../../lib/http.js';
 import { validateUpdate } from '../../../lib/validation.js';
 import { mapPartialBodyToRow } from '../../../lib/mapping.js';
+import { requireAdmin, handleAuthError } from '../../../lib/auth-middleware.js';
 
 export const prerender = false;
 
@@ -24,6 +25,9 @@ export async function GET({ params }) {
 }
 
 export async function PUT({ params, request }) {
+  const auth = requireAdmin(request);
+  if (auth.error) return handleAuthError(auth);
+
   let body;
   try {
     body = await request.json();
@@ -61,7 +65,10 @@ export async function PUT({ params, request }) {
   return json({ data });
 }
 
-export async function DELETE({ params }) {
+export async function DELETE({ params, request }) {
+  const auth = requireAdmin(request);
+  if (auth.error) return handleAuthError(auth);
+
   const { data, error } = await supabase
     .from('Estudiantes')
     .delete()

@@ -2,6 +2,7 @@ import { supabase } from '../../lib/supabase.js';
 import { json } from '../../lib/http.js';
 import { validateCreate } from '../../lib/validation.js';
 import { mapBodyToRow } from '../../lib/mapping.js';
+import { requireAdmin, handleAuthError } from '../../lib/auth-middleware.js';
 
 export const prerender = false;
 
@@ -19,6 +20,9 @@ export async function GET() {
 }
 
 export async function POST({ request }) {
+  const auth = requireAdmin(request);
+  if (auth.error) return handleAuthError(auth);
+
   let body;
   try {
     body = await request.json();

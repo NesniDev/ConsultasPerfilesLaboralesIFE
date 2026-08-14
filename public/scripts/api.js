@@ -7,14 +7,26 @@
   const BASE_URL = '/api/estudiantes';
 
   async function request(url, options = {}) {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(url, {
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       ...options,
     });
 
     const payload = await res.json().catch(() => null);
 
     if (!res.ok) {
+      if (res.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return;
+      }
       throw new Error(payload?.error?.message || `Solicitud fallida (estado ${res.status})`);
     }
 

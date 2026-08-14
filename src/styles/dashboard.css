@@ -1382,3 +1382,19 @@ textarea.form-input {
 .page-header-logo {
   animation: spin-slow 6s linear infinite;
 }
+
+/* Animación de pulse para el logo */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+  }
+}
+
+.page-header-logo {
+  animation: spin-slow 6s linear infinite, pulse-glow 2s ease-in-out infinite;
+}

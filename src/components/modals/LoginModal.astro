@@ -1,64 +1,291 @@
 <div class="modal-overlay" id="login-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 class="modal-title">Iniciar Sesión</h3>
-      <button class="modal-close" onclick="app.closeLoginModal()">
+  <div class="login-modal">
+    <div class="login-header">
+      <div class="login-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <h2 class="login-title">Iniciar Sesión</h2>
+      <button class="login-close" onclick="app.closeLoginModal()" type="button">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
       </button>
     </div>
-    <div class="modal-body">
-      <form id="login-form" onsubmit="app.handleLogin(event)">
-        <div class="form-group">
-          <label class="form-label">Usuario</label>
-          <input type="text" class="form-input" id="login-username" placeholder="admin" required />
+
+    <form id="login-form" onsubmit="app.handleLogin(event)" class="login-form">
+      <div class="login-field">
+        <label class="login-label">Usuario</label>
+        <input type="text" class="login-input" id="login-username" placeholder="Ingresa tu usuario" required />
+      </div>
+
+      <div class="login-field">
+        <label class="login-label">Contraseña</label>
+        <div class="login-password-wrapper">
+          <input type="password" class="login-input" id="login-password" placeholder="Ingresa tu contraseña" required />
+          <button
+            type="button"
+            class="login-eye-btn"
+            onclick="app.togglePasswordVisibility()"
+          >
+            <svg id="password-eye" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
         </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <div style="position: relative;">
-            <input type="password" class="form-input" id="login-password" placeholder="••••••••" required />
-            <button
-              type="button"
-              onclick="app.togglePasswordVisibility()"
-              style="
-                position: absolute;
-                right: 12px;
-                top: 50%;
-                transform: translateY(-50%);
-                background: none;
-                border: none;
-                cursor: pointer;
-                color: #666;
-                padding: 4px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              "
-            >
-              <svg id="password-eye" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="login-error" id="login-error" style="display: none; background-color: #fee; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;"></div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="app.closeLoginModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="app.handleLogin()">Iniciar Sesión</button>
-    </div>
+      </div>
+
+      <div class="login-error" id="login-error" style="display: none;"></div>
+
+      <button type="submit" class="login-submit">
+        <span>Iniciar Sesión</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </button>
+
+      <button type="button" class="login-cancel" onclick="app.closeLoginModal()">Cancelar</button>
+    </form>
   </div>
 </div>
 
 <style>
-  .login-error {
-    display: none;
+  .login-modal {
+    position: relative;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 360px;
+    animation: slideIn 0.3s ease-out;
   }
 
-  .login-error.show {
-    display: block;
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .login-header {
+    position: relative;
+    padding: 24px 24px 0;
+    text-align: center;
+  }
+
+  .login-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-radius: 12px;
+    color: white;
+    margin-bottom: 12px;
+  }
+
+  .login-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .login-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 8px;
+    letter-spacing: -0.5px;
+  }
+
+  .login-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .login-close:hover {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+
+  .login-close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .login-form {
+    padding: 24px 24px 20px;
+  }
+
+  .login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .login-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .login-input {
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    color: #1f2937;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .login-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: #f9fafb;
+  }
+
+  .login-input::placeholder {
+    color: #d1d5db;
+  }
+
+  .login-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .login-eye-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    z-index: 1;
+  }
+
+  .login-eye-btn:hover {
+    color: #6b7280;
+  }
+
+  .login-eye-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .login-error {
+    display: none;
+    padding: 10px 12px;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    animation: shake 0.3s ease-in-out;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .login-submit {
+    width: 100%;
+    padding: 11px 16px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px -4px rgba(59, 130, 246, 0.4);
+  }
+
+  .login-submit:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 6px 16px -4px rgba(59, 130, 246, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .login-submit:active {
+    transform: translateY(0);
+  }
+
+  .login-submit svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .login-cancel {
+    width: 100%;
+    padding: 10px 16px;
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .login-cancel:hover {
+    background: #f9fafb;
+    color: #374151;
+    border-color: #d1d5db;
+  }
+
+  @media (max-width: 480px) {
+    .login-modal {
+      max-width: 320px;
+      margin: 16px;
+    }
+
+    .login-form {
+      padding: 20px 16px 16px;
+    }
+
+    .login-input {
+      font-size: 16px;
+      padding: 12px 12px;
+    }
   }
 </style>

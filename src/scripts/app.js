@@ -441,8 +441,7 @@ class App {
     const submitBtn = event?.target?.querySelector('[type="submit"]') || document.querySelector('#login-modal .btn-primary');
 
     if (!username || !password) {
-      errorDiv.textContent = 'Por favor completa todos los campos';
-      errorDiv.classList.add('show');
+      alert('Por favor completa todos los campos');
       return;
     }
 
@@ -466,13 +465,12 @@ class App {
       localStorage.setItem('user', JSON.stringify(data.user));
       this.user = data.user;
       this.isAdmin = true;
+      alert('¡Sesión iniciada correctamente!');
       this.closeLoginModal();
       this.initAuth();
-      this.showToast('Sesión iniciada correctamente', 'success');
       location.reload();
     } catch (err) {
-      errorDiv.textContent = err.message || 'Error al iniciar sesión';
-      errorDiv.classList.add('show');
+      alert(err.message || 'Usuario o contraseña incorrectos');
     } finally {
       if (submitBtn) submitBtn.disabled = false;
     }

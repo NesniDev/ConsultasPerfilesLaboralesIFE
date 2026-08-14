@@ -37,32 +37,38 @@ import '../styles/dashboard.css'
   <ToastContainer />
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script is:inline>
-    // Initialize Supabase Auth
+  <script is:inline define:vars={{
+    supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL,
+    supabaseAnonKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  }}>
+    // Initialize Supabase Auth with env vars passed via define:vars
     window.initSupabaseAuth = function() {
-      const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL;
-      const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+      const SUPABASE_URL = supabaseUrl;
+      const SUPABASE_ANON_KEY = supabaseAnonKey;
 
       if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        console.error('Missing Supabase env vars. Add to .env:\nPUBLIC_SUPABASE_URL=...\nPUBLIC_SUPABASE_ANON_KEY=...');
+        console.error('Missing Supabase credentials');
+        console.error('SUPABASE_URL:', SUPABASE_URL);
+        console.error('SUPABASE_ANON_KEY:', SUPABASE_ANON_KEY);
+        alert('Error: Supabase credentials not configured. Check .env file.');
         return false;
       }
 
       if (typeof supabase === 'undefined') {
-        console.error('Supabase library not loaded');
+        console.error('Supabase library not loaded from CDN');
         return false;
       }
 
       window.supabaseAuth = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY).auth;
-      console.log('Supabase Auth initialized');
+      console.log('✓ Supabase Auth initialized successfully');
       return true;
     };
 
-    // Wait for Supabase library to load
+    // Initialize when page loads
     if (typeof supabase !== 'undefined') {
       window.initSupabaseAuth();
     } else {
-      document.addEventListener('DOMContentLoaded', () => {
+      window.addEventListener('load', () => {
         setTimeout(() => window.initSupabaseAuth(), 500);
       });
     }

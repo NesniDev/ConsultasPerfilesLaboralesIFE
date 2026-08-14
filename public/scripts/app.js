@@ -114,10 +114,6 @@ class App {
   }
 
   initAuth() {
-    const newBtn = document.querySelector('.card-header-right .btn-primary');
-    if (newBtn && !this.isAdmin) {
-      newBtn.style.display = 'none';
-    }
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
       if (this.isAdmin) {
@@ -134,6 +130,10 @@ class App {
     const pageHeader = document.querySelector('.page-header');
     if (pageHeader) {
       pageHeader.style.display = this.isAdmin ? 'none' : 'block';
+    }
+    const adminControls = document.getElementById('admin-controls');
+    if (adminControls) {
+      adminControls.style.display = this.isAdmin ? 'flex' : 'none';
     }
   }
 

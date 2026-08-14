@@ -331,7 +331,19 @@ class App {
     if (modal) {
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
-      document.getElementById('login-email').focus();
+      document.getElementById('login-username').focus();
+    }
+  }
+
+  togglePasswordVisibility() {
+    const input = document.getElementById('login-password');
+    const eye = document.getElementById('password-eye');
+    if (input.type === 'password') {
+      input.type = 'text';
+      eye.style.opacity = '0.5';
+    } else {
+      input.type = 'password';
+      eye.style.opacity = '1';
     }
   }
 

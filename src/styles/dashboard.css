@@ -1369,3 +1369,16 @@ textarea.form-input {
     font-size: 22px;
   }
 }
+/* Animación del logo */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.page-header-logo {
+  animation: spin-slow 6s linear infinite;
+}

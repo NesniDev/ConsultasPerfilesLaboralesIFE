@@ -116,20 +116,15 @@ class App {
   initAuth() {
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
-      if (this.isAdmin) {
-        loginBtn.style.display = 'none';
-        this.renderAdminBadge();
-      } else {
-        loginBtn.style.display = 'inline-flex';
-      }
+      loginBtn.style.display = this.isAdmin ? 'none' : 'inline-flex';
+    }
+    const adminBadge = document.getElementById('admin-badge');
+    if (adminBadge) {
+      adminBadge.style.display = this.isAdmin ? 'flex' : 'none';
     }
     const adminStats = document.getElementById('admin-stats');
     if (adminStats) {
       adminStats.style.display = this.isAdmin ? 'block' : 'none';
-    }
-    const headerText = document.getElementById('header-text');
-    if (headerText) {
-      headerText.style.display = this.isAdmin ? 'block' : 'none';
     }
     const adminControls = document.getElementById('admin-controls');
     if (adminControls) {
@@ -137,20 +132,6 @@ class App {
     }
   }
 
-  renderAdminBadge() {
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-      const badge = document.createElement('div');
-      badge.style.cssText = 'display: flex; gap: 12px; align-items: center;';
-      badge.innerHTML = `
-        <span style="font-size: 12px; padding: 4px 8px; background: #3b82f6; color: white; border-radius: 4px;">
-          Administrador
-        </span>
-        <button onclick="app.logout()" style="background: none; border: none; color: #666; cursor: pointer; font-size: 14px; padding: 0;">Cerrar sesión</button>
-      `;
-      navbar.appendChild(badge);
-    }
-  }
 
   logout() {
     localStorage.removeItem('authToken');

@@ -16,13 +16,16 @@ const {
   <div class="page-header-content">
     <div class="page-header-brand">
       <img src="/LOGO-IFE.png" alt="Logo IFE" class="page-header-logo" />
-      <div class="page-header-text" id="header-text">
-        <span class="page-header-eyebrow">{eyebrow}</span>
-        <h1 class="page-header-title">{title}</h1>
-        <p class="page-header-subtitle">{subtitle}</p>
-      </div>
     </div>
     <div class="page-header-actions">
+      <div id="admin-badge" style="display: none; gap: 12px; align-items: center;">
+        <span style="font-size: 12px; padding: 4px 8px; background: #3b82f6; color: white; border-radius: 4px;">
+          Administrador
+        </span>
+        <button onclick="app.logout()" style="background: none; border: none; color: #666; cursor: pointer; font-size: 14px; padding: 0;">
+          Cerrar sesión
+        </button>
+      </div>
       <div class="page-header-buttons">
         <button class="header-btn" onclick="app.goToLogin()" id="login-btn">
           <svg

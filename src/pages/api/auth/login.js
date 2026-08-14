@@ -2,9 +2,12 @@ import { supabase } from '../../../lib/supabase.js';
 import { generateJWT, comparePassword } from '../../../lib/auth.js';
 import { json } from '../../../lib/http.js';
 
+export const prerender = false;
+
 export async function POST({ request }) {
   try {
     const { email, password } = await request.json();
+    console.log('Login attempt:', { email, passwordLength: password?.length });
 
     if (!email || !password) {
       return json({ error: 'Email and password required' }, { status: 400 });
@@ -16,11 +19,16 @@ export async function POST({ request }) {
       .eq('email', email)
       .single();
 
+    console.log('User query result:', { error, userFound: !!users, email });
+
     if (error || !users) {
+      console.log('User not found error:', error);
       return json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     const passwordMatch = await comparePassword(password, users.password_hash);
+    console.log('Password match:', passwordMatch);
+
     if (!passwordMatch) {
       return json({ error: 'Invalid credentials' }, { status: 401 });
     }
@@ -31,6 +39,8 @@ export async function POST({ request }) {
       role: users.role,
     });
 
+    console.log('Login successful for:', email);
+
     return json({
       token,
       user: {
@@ -40,6 +50,7 @@ export async function POST({ request }) {
       },
     });
   } catch (err) {
+    console.error('Login error:', err);
     return json({ error: err.message }, { status: 500 });
   }
 }

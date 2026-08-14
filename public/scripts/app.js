@@ -341,10 +341,10 @@ class App {
     const eye = document.getElementById('password-eye');
     if (input.type === 'password') {
       input.type = 'text';
-      eye.style.opacity = '0.5';
+      eye.style.color = '#3b82f6';
     } else {
       input.type = 'password';
-      eye.style.opacity = '1';
+      eye.style.color = '#9ca3af';
     }
   }
 
@@ -471,8 +471,8 @@ class App {
       this.showToast('Sesión iniciada correctamente', 'success');
       location.reload();
     } catch (err) {
-      this.closeLoginModal();
-      this.showToast(err.message || 'Error al iniciar sesión', 'error');
+      errorDiv.textContent = err.message || 'Error al iniciar sesión';
+      errorDiv.classList.add('show');
     } finally {
       if (submitBtn) submitBtn.disabled = false;
     }

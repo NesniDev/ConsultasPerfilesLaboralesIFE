@@ -52,6 +52,26 @@
 </div>
 
 <style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 50;
+    transition: background 0.3s ease;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
   .login-modal {
     position: relative;
     background: white;
@@ -157,7 +177,7 @@
     border-radius: 8px;
     background: white;
     color: #1f2937;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     font-family: inherit;
   }
 
@@ -165,7 +185,7 @@
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    background: #f9fafb;
+    background: white;
   }
 
   .login-input::placeholder {
@@ -204,14 +224,19 @@
 
   .login-error {
     display: none;
-    padding: 10px 12px;
-    background: #fee2e2;
-    color: #991b1b;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #fee2e2, #fed7d7);
+    color: #7f1d1d;
     border: 1px solid #fecaca;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 13px;
+    font-weight: 500;
     margin-bottom: 16px;
-    animation: shake 0.3s ease-in-out;
+    animation: shake 0.4s ease-in-out;
+  }
+
+  .login-error.show {
+    display: block;
   }
 
   @keyframes shake {
@@ -242,11 +267,17 @@
   .login-submit:hover {
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
     box-shadow: 0 6px 16px -4px rgba(59, 130, 246, 0.5);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
   }
 
   .login-submit:active {
     transform: translateY(0);
+    box-shadow: 0 2px 8px -2px rgba(59, 130, 246, 0.3);
+  }
+
+  .login-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 
   .login-submit svg {
@@ -268,9 +299,13 @@
   }
 
   .login-cancel:hover {
-    background: #f9fafb;
+    background: #f3f4f6;
     color: #374151;
     border-color: #d1d5db;
+  }
+
+  .login-cancel:active {
+    background: #e5e7eb;
   }
 
   @media (max-width: 480px) {

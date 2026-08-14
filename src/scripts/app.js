@@ -133,7 +133,13 @@ class App {
   }
 
 
-  logout() {
+  async logout() {
+    try {
+      await window.supabaseAuth.signOut();
+    } catch (err) {
+      console.error('Error signing out:', err);
+    }
+
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     this.user = null;
@@ -435,12 +441,12 @@ class App {
   async handleLogin(event) {
     if (event) event.preventDefault();
 
-    const username = document.getElementById('login-username').value;
+    const email = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
     const errorDiv = document.getElementById('login-error');
     const submitBtn = event?.target?.querySelector('[type="submit"]') || document.querySelector('#login-modal .btn-primary');
 
-    if (!username || !password) {
+    if (!email || !password) {
       this.showToast('Por favor completa todos los campos', 'error');
       return;
     }
@@ -449,20 +455,17 @@ class App {
     if (submitBtn) submitBtn.disabled = true;
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+      const { data, error } = await window.supabaseAuth.signInWithPassword({
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al iniciar sesión');
+      if (error) {
+        throw new Error(error.message || 'Usuario o contraseña incorrectos');
       }
 
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('authToken', data.session.access_token);
+      localStorage.setItem('user', JSON.stringify({ id: data.user.id, email: data.user.email, role: 'admin' }));
       this.showToast('¡Sesión iniciada correctamente!', 'success');
       setTimeout(() => window.location.reload(), 800);
     } catch (err) {

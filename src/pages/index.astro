@@ -36,6 +36,17 @@ import '../styles/dashboard.css'
   <ChangePasswordModal />
   <ToastContainer />
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script is:inline>
+    const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL;
+    const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      console.error('Missing Supabase credentials in PUBLIC_ env vars');
+    } else {
+      window.supabaseAuth = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY).auth;
+    }
+  </script>
   <script is:inline src="/scripts/api.js"></script>
   <script is:inline src="/scripts/store.js"></script>
   <script is:inline src="/scripts/app.js"></script>

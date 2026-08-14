@@ -131,6 +131,10 @@ class App {
     if (adminStats) {
       adminStats.style.display = this.isAdmin ? 'block' : 'none';
     }
+    const pageHeader = document.querySelector('.page-header');
+    if (pageHeader) {
+      pageHeader.style.display = this.isAdmin ? 'none' : 'block';
+    }
   }
 
   renderAdminBadge() {

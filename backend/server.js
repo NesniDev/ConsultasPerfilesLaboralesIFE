@@ -1,5 +1,11 @@
-import dotenv from 'dotenv';
-dotenv.config();
+// dotenv es solo para desarrollo local (carga .env). En Vercel (y en cPanel
+// vía Node.js App Manager) las env vars ya vienen en process.env, así que
+// evitamos importar dotenv ahí para no depender de un paquete que algunos
+// bundlers serverless no resuelven en runtime.
+if (!process.env.VERCEL) {
+  const dotenv = await import('dotenv');
+  dotenv.config();
+}
 
 // IMPORTANT: These imports MUST come AFTER setting fallback environment variables
 import express from 'express';

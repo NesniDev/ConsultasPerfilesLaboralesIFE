@@ -456,7 +456,8 @@ class App {
 
     try {
       if (!window.supabaseAuth) {
-        throw new Error('Supabase no está disponible. Recarga la página.');
+        console.error('Supabase Auth not available');
+        throw new Error('generic');
       }
 
       const { data, error } = await window.supabaseAuth.signInWithPassword({
@@ -465,7 +466,9 @@ class App {
       });
 
       if (error) {
-        throw new Error(error.message || 'Usuario o contraseña incorrectos');
+        // Log real error for debugging
+        console.error('Auth error:', error.message);
+        throw new Error('generic');
       }
 
       localStorage.setItem('authToken', data.session.access_token);
@@ -473,7 +476,16 @@ class App {
       this.showToast('¡Sesión iniciada correctamente!', 'success');
       setTimeout(() => window.location.reload(), 800);
     } catch (err) {
-      this.showToast(err.message || 'Usuario o contraseña incorrectos', 'error');
+      // Show generic message to user, log real error in console
+      const userMessage = err.message === 'generic'
+        ? 'Email o contraseña incorrectos'
+        : 'Ocurrió un error. Intenta de nuevo.';
+
+      if (err.message !== 'generic') {
+        console.error('Login error:', err.message);
+      }
+
+      this.showToast(userMessage, 'error');
     } finally {
       if (submitBtn) submitBtn.disabled = false;
     }

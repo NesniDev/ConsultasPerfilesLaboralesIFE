@@ -1,10 +1,17 @@
 /**
  * StudentApi
- * Thin HTTP client for the server-side /api/estudiantes endpoints.
+ * Thin HTTP client for the backend /api/estudiantes endpoints.
+ * Uses window.API_BASE_URL (set by app.js from config.js).
  * Every method throws Error(res.error.message) when the request fails.
  */
 (function (global) {
-  const BASE_URL = '/api/estudiantes';
+  // Resolved on every call, not cached at module-load time — api.js runs
+  // before app.js's DOMContentLoaded handler sets window.API_BASE_URL, so
+  // caching it here would always capture the localhost fallback.
+  const BASE_URL_ENDPOINT = () => {
+    const baseUrl = window.API_BASE_URL || 'http://localhost:3000';
+    return baseUrl + '/api/estudiantes';
+  };
 
   async function request(url, options = {}) {
     const headers = { 'Content-Type': 'application/json' };
@@ -35,17 +42,17 @@
 
   const StudentApi = {
     async list() {
-      const payload = await request(BASE_URL);
+      const payload = await request(BASE_URL_ENDPOINT());
       return payload.data;
     },
 
     async get(id) {
-      const payload = await request(`${BASE_URL}/${id}`);
+      const payload = await request(`${BASE_URL_ENDPOINT()}/${id}`);
       return payload.data;
     },
 
     async create(payloadBody) {
-      const payload = await request(BASE_URL, {
+      const payload = await request(BASE_URL_ENDPOINT(), {
         method: 'POST',
         body: JSON.stringify(payloadBody),
       });
@@ -53,7 +60,7 @@
     },
 
     async update(id, payloadBody) {
-      const payload = await request(`${BASE_URL}/${id}`, {
+      const payload = await request(`${BASE_URL_ENDPOINT()}/${id}`, {
         method: 'PUT',
         body: JSON.stringify(payloadBody),
       });
@@ -61,7 +68,7 @@
     },
 
     async remove(id) {
-      await request(`${BASE_URL}/${id}`, { method: 'DELETE' });
+      await request(`${BASE_URL_ENDPOINT()}/${id}`, { method: 'DELETE' });
     },
   };
 

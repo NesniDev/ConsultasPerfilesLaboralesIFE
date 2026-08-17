@@ -36,38 +36,51 @@ import '../styles/dashboard.css'
   <ChangePasswordModal />
   <ToastContainer />
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
   <script is:inline>
-    // Initialize Supabase Auth
+    // Initialize Supabase Auth with retry logic
     window.initSupabaseAuth = function() {
       const SUPABASE_URL = "https://zjjcsmcojstgpfnircnb.supabase.co";
       const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqamNvanN0Z3BmbmlyY25iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNDY1MTQsImV4cCI6MjEwMTYyMjUxNH0.LFmh7EQQViqaoaKgZ7eqY79eXAKoDNhzUWVE9YBYv6Y";
 
-      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        console.error('Missing Supabase credentials');
-        console.error('SUPABASE_URL:', SUPABASE_URL);
-        console.error('SUPABASE_ANON_KEY:', SUPABASE_ANON_KEY);
-        alert('Error: Supabase credentials not configured. Check .env file.');
+      if (typeof window.supabase === 'undefined') {
+        console.warn('Supabase library still loading...');
         return false;
       }
 
-      if (typeof supabase === 'undefined') {
-        console.error('Supabase library not loaded from CDN');
+      try {
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabaseAuth = client.auth;
+        console.log('✓ Supabase Auth initialized');
+        return true;
+      } catch (err) {
+        console.error('Failed to initialize Supabase:', err);
         return false;
       }
-
-      window.supabaseAuth = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY).auth;
-      console.log('✓ Supabase Auth initialized successfully');
-      return true;
     };
 
-    // Initialize when page loads
-    if (typeof supabase !== 'undefined') {
-      window.initSupabaseAuth();
+    // Retry initialization with exponential backoff
+    let retries = 0;
+    const maxRetries = 10;
+
+    function tryInit() {
+      if (window.initSupabaseAuth()) {
+        return; // Success
+      }
+
+      retries++;
+      if (retries < maxRetries) {
+        setTimeout(tryInit, 100 * retries);
+      } else {
+        console.error('Failed to initialize Supabase after retries');
+      }
+    }
+
+    // Start initialization
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', tryInit);
     } else {
-      window.addEventListener('load', () => {
-        setTimeout(() => window.initSupabaseAuth(), 500);
-      });
+      tryInit();
     }
   </script>
   <script is:inline src="/scripts/api.js"></script>

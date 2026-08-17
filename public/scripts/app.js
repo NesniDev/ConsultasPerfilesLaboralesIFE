@@ -455,6 +455,10 @@ class App {
     if (submitBtn) submitBtn.disabled = true;
 
     try {
+      if (!window.supabaseAuth) {
+        throw new Error('Supabase no está disponible. Recarga la página.');
+      }
+
       const { data, error } = await window.supabaseAuth.signInWithPassword({
         email,
         password,

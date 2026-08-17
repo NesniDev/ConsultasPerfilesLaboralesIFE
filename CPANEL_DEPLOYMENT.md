@@ -1,4 +1,8 @@
-# Despliegue en cPanel
+# Despliegue en cPanel (DESACTUALIZADO)
+
+> ⚠️ Este documento describe la arquitectura vieja (Astro + `@astrojs/node` standalone).
+> El proyecto ya migró a **frontend estático + backend Express separado**.
+> Usá **SEPARATED_DEPLOYMENT.md** y **BACKEND_SETUP.md** en su lugar.
 
 El proyecto está configurado para desplegar en cPanel con Node.js standalone.
 
@@ -61,9 +65,7 @@ En cPanel, en el Node.js App Manager:
 3. Agrega:
    ```
    SUPABASE_URL=https://zjjcsmcojstgpfnircnb.supabase.co
-   SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-   PUBLIC_SUPABASE_URL=https://zjjcsmcojstgpfnircnb.supabase.co
-   PUBLIC_SUPABASE_ANON_KEY=sb_publishable_AKRj6rZCTZ1-_Pe9GUjEDA_z4RQcDc0
+   SUPABASE_SERVICE_ROLE_KEY=<tu secret key — Project Settings > API Keys > Secret keys>
    NODE_ENV=production
    ```
 

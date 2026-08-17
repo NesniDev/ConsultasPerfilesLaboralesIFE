@@ -12,8 +12,8 @@ Frontend (HTML/CSS/JS estático)
 
 Backend (Node.js API)
 ├── Ubicación: Servidor separado o subdominio
-├── URL: https://api.tudominio.com
-└── Rutas: /api/auth/*, /api/estudiantes/*
+├── URL: https://perfilab.ifecolombia.edu.co
+└── Rutas: /api/estudiantes/* (login y cambio de password van directo contra Supabase Auth, no pasan por este backend — ver BACKEND_SETUP.md)
 ```
 
 ## Frontend en cPanel
@@ -125,8 +125,7 @@ app.listen(PORT, () => {
 
 ```env
 SUPABASE_URL=https://zjjcsmcojstgpfnircnb.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_ANON_KEY=sb_publishable_AKRj6rZCTZ1-_Pe9GUjEDA_z4RQcDc0
+SUPABASE_SERVICE_ROLE_KEY=<tu secret key — Project Settings > API Keys > Secret keys>
 PORT=3000
 NODE_ENV=production
 ```
@@ -173,7 +172,7 @@ En el frontend, cambia `src/scripts/config.js`:
 export const API_BASE_URL =
   typeof window !== 'undefined' && window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://api.tudominio.com';  // ← Cambia esto
+    : 'https://perfilab.ifecolombia.edu.co';  // ← Cambia esto
 ```
 
 Luego: `npm run build` y sube a cPanel.
@@ -194,7 +193,7 @@ app.use(cors({
 | Parte | Ubicación | Tecnología | URL |
 |-------|-----------|-----------|-----|
 | Frontend | cPanel public_html/ | HTML/CSS/JS estático | https://tudominio.com |
-| Backend | Servidor separado | Node.js/Express | https://api.tudominio.com |
+| Backend | Servidor separado | Node.js/Express | https://perfilab.ifecolombia.edu.co |
 | Database | Supabase | PostgreSQL | - |
 
 ## Ventajas

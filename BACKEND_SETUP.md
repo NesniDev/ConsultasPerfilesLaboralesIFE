@@ -11,11 +11,14 @@ backend/
 ├── .env (crear con tus valores)
 └── src/lib/
     ├── supabase.js
-    ├── auth.js
     ├── validation.js
     ├── mapping.js
     └── http.js
 ```
+
+> El login y el cambio de contraseña se hacen client-side contra Supabase Auth
+> directamente (ver `src/scripts/app.js`). Este backend solo expone las rutas
+> de `Estudiantes` y valida el token de Supabase para las escrituras.
 
 ## Instalación Local
 
@@ -37,12 +40,13 @@ Copia los valores de `.env.example` y crea `.env`:
 
 ```env
 SUPABASE_URL=https://zjjcsmcojstgpfnircnb.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqamNvanN0Z3BmbmlyY25iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjA0NjUxNCwiZXhwIjoyMTAxNjIyNTE0fQ.WxkXYwOTbn0Lp1U41rQw9WCKsNkyUJ2pSXbdIJ7J2Tk
-JWT_SECRET=ifecolombia2026
+SUPABASE_SERVICE_ROLE_KEY=<tu secret key de Supabase — Project Settings > API Keys > Secret keys>
 PORT=3000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
 ```
+
+> Nunca commitees el valor real de `SUPABASE_SERVICE_ROLE_KEY` — `.env` está gitignored a propósito.
 
 ### 4. Ejecutar localmente
 
@@ -75,7 +79,7 @@ npm install
    - **Node.js Version:** 22.12.0+
    - **Application Root:** `/home/usuario/backend/`
    - **Application Startup File:** `server.js`
-   - **Application URL:** `api.tudominio.edu.co` (subdominio)
+   - **Application URL:** `perfilab.ifecolombia.edu.co` (subdominio)
 
 4. Click **"Create"**
 
@@ -86,10 +90,9 @@ En cPanel Node.js App Manager → Environment Variables:
 ```
 SUPABASE_URL=https://zjjcsmcojstgpfnircnb.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=[tu_clave]
-JWT_SECRET=ifecolombia2026
 PORT=3000
 NODE_ENV=production
-FRONTEND_URL=https://tudominio.edu.co
+FRONTEND_URL=https://ifecolombia.edu.co
 ```
 
 ### 4. Reiniciar
@@ -109,7 +112,6 @@ Click en **"Restart"** en el Node.js App Manager
   "env": {
     "SUPABASE_URL": "@supabase_url",
     "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
-    "JWT_SECRET": "@jwt_secret",
     "FRONTEND_URL": "@frontend_url"
   }
 }
@@ -126,16 +128,11 @@ vercel
 
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `JWT_SECRET`
 - `FRONTEND_URL`
 
 ---
 
 ## Rutas disponibles
-
-### Autenticación
-- `POST /api/auth/login` - Iniciar sesión
-- `POST /api/auth/change-password` - Cambiar contraseña
 
 ### Estudiantes
 - `GET /api/estudiantes` - Listar todos
@@ -150,8 +147,8 @@ vercel
 
 El backend permite estas URLs por defecto:
 - `http://localhost:3000`
-- `https://tudominio.edu.co`
-- `https://tudominio.edu.co/app`
+- `https://ifecolombia.edu.co`
+- `https://www.ifecolombia.edu.co`
 
 Edita `server.js` en la sección CORS si necesitas agregar más URLs.
 
@@ -179,7 +176,7 @@ Una vez el backend esté corriendo, actualiza en frontend:
 
 `src/scripts/config.js`:
 ```javascript
-export const API_BASE_URL = 'https://api.tudominio.edu.co'; // O tu URL del backend
+export const API_BASE_URL = 'https://perfilab.ifecolombia.edu.co';
 ```
 
-Luego: `npm run build` y sube a cPanel.
+Luego: `npm run build` y sube el contenido de `dist/` a `public_html/perfiles-laborales/` en cPanel.

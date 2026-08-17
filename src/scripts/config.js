@@ -4,11 +4,9 @@
 export const API_BASE_URL =
   typeof window !== 'undefined' && window.location.hostname === 'localhost'
     ? 'http://localhost:3000'  // Development
-    : 'https://api.tudominio.com';  // Production - CHANGE THIS
+    : 'https://perfilab.ifecolombia.edu.co';  // Production
 
 export const API_ENDPOINTS = {
-  changePassword: `${API_BASE_URL}/api/auth/change-password`,
-  login: `${API_BASE_URL}/api/auth/login`,
   students: `${API_BASE_URL}/api/estudiantes`,
 };
 

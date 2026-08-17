@@ -413,7 +413,11 @@ class App {
     if (submitBtn) submitBtn.disabled = true;
 
     try {
-      const response = await fetch('/api/auth/change-password', {
+      // Dynamically import config to get API_BASE_URL
+      const { API_BASE_URL } = await import('./config.js');
+      const apiUrl = `${API_BASE_URL}/api/auth/change-password`;
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

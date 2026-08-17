@@ -413,23 +413,29 @@ class App {
     if (submitBtn) submitBtn.disabled = true;
 
     try {
-      // Dynamically import config to get API_BASE_URL
-      const { API_BASE_URL } = await import('./config.js');
-      const apiUrl = `${API_BASE_URL}/api/auth/change-password`;
+      if (!window.supabaseAuth) {
+        throw new Error('Supabase Auth no está disponible');
+      }
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-        },
-        body: JSON.stringify({ currentPassword, newPassword }),
+      const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+      if (!storedUser?.email) {
+        throw new Error('Sesión inválida, volvé a iniciar sesión');
+      }
+
+      // Re-verificar la contraseña actual antes de cambiarla
+      const { error: verifyError } = await window.supabaseAuth.signInWithPassword({
+        email: storedUser.email,
+        password: currentPassword,
       });
+      if (verifyError) {
+        throw new Error('Contraseña actual incorrecta');
+      }
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al cambiar la contraseña');
+      const { error: updateError } = await window.supabaseAuth.updateUser({
+        password: newPassword,
+      });
+      if (updateError) {
+        throw new Error(updateError.message || 'Error al cambiar la contraseña');
       }
 
       this.closeChangePasswordModal();
@@ -475,8 +481,18 @@ class App {
         throw new Error('generic');
       }
 
+      let role = 'viewer';
+      if (window.supabaseClient) {
+        const { data: profile } = await window.supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+        if (profile?.role) role = profile.role;
+      }
+
       localStorage.setItem('authToken', data.session.access_token);
-      localStorage.setItem('user', JSON.stringify({ id: data.user.id, email: data.user.email, role: 'admin' }));
+      localStorage.setItem('user', JSON.stringify({ id: data.user.id, email: data.user.email, role }));
       this.showToast('¡Sesión iniciada correctamente!', 'success');
       setTimeout(() => window.location.reload(), 800);
     } catch (err) {
@@ -795,7 +811,17 @@ class App {
 
 // Initialize
 let app;
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Import API config and set global API_BASE_URL
+  try {
+    const { API_BASE_URL } = await import('./config.js');
+    window.API_BASE_URL = API_BASE_URL;
+    console.log('✓ API Base URL set to:', window.API_BASE_URL);
+  } catch (err) {
+    console.warn('Failed to load config.js, using fallback API base URL:', err);
+    window.API_BASE_URL = 'http://localhost:3000'; // Fallback for development
+  }
+
   app = new App();
   app.init();
 });

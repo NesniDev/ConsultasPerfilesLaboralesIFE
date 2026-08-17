@@ -53,6 +53,7 @@ import '../styles/dashboard.css'
 
       try {
         const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabaseClient = client;
         window.supabaseAuth = client.auth;
         if (window.isDevelopment) console.log('✓ Supabase Auth initialized');
         return true;
@@ -86,7 +87,7 @@ import '../styles/dashboard.css'
       tryInit();
     }
   </script>
-  <script is:inline src="/scripts/api.js"></script>
-  <script is:inline src="/scripts/store.js"></script>
-  <script is:inline src="/scripts/app.js"></script>
+  <script is:inline src={`${import.meta.env.BASE_URL}scripts/api.js`}></script>
+  <script is:inline src={`${import.meta.env.BASE_URL}scripts/store.js`}></script>
+  <script is:inline src={`${import.meta.env.BASE_URL}scripts/app.js`}></script>
 </Layout>

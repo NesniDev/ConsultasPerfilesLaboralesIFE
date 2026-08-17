@@ -1,7 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+// IMPORTANT: These imports MUST come AFTER setting fallback environment variables
 import express from 'express';
 import cors from 'cors';
 import { supabase } from './src/lib/supabase.js';
-import { verifyJWT, comparePassword, hashPassword } from './src/lib/auth.js';
 import { json } from './src/lib/http.js';
 import { validateCreate, validateUpdate } from './src/lib/validation.js';
 import { toApiPayload, toUiModel } from './src/lib/mapping.js';
@@ -13,14 +16,17 @@ const PORT = process.env.PORT || 3000;
 app.use(cors({
   origin: [
     'http://localhost:3000',
+    'http://localhost:4321',      // Astro dev server
     'http://localhost',
-    'https://tudominio.edu.co',
-    'https://www.tudominio.edu.co',
-    'https://tudominio.edu.co/app',
-    process.env.FRONTEND_URL || 'https://tudominio.edu.co'
+    'https://localhost:4321',
+    'https://ifecolombia.edu.co',
+    'https://www.ifecolombia.edu.co',
+    process.env.FRONTEND_URL || 'https://ifecolombia.edu.co'
   ],
   credentials: true
 }));
+
+// Backend URL (informativo): https://perfilab.ifecolombia.edu.co
 
 app.use(express.json());
 
@@ -29,111 +35,42 @@ app.get('/', (req, res) => {
   res.json({ status: 'Backend running', timestamp: new Date().toISOString() });
 });
 
-// ============ AUTH ROUTES ============
+// ============ AUTH HELPERS ============
+// El login y el cambio de contraseña se hacen client-side contra Supabase Auth
+// (window.supabaseAuth) — ver src/scripts/app.js. Este backend solo necesita
+// validar el access_token de Supabase para proteger las rutas de escritura.
 
-// Login
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email y contraseña requeridos' });
-    }
-
-    // Get user from Supabase
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('id, email, password_hash')
-      .eq('email', email)
-      .single();
-
-    if (userError || !user) {
-      return res.status(401).json({ error: 'Credenciales inválidas' });
-    }
-
-    // Verify password
-    const passwordMatch = await comparePassword(password, user.password_hash);
-    if (!passwordMatch) {
-      return res.status(401).json({ error: 'Credenciales inválidas' });
-    }
-
-    // Generate JWT token
-    const token = await generateJWT({ userId: user.id, email: user.email });
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: 'admin'
-      }
-    });
-  } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ error: 'Error al iniciar sesión' });
+async function requireAuth(req) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return { error: 'No autorizado', status: 401 };
   }
-});
 
-// Change password
-app.post('/api/auth/change-password', async (req, res) => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Token requerido' });
-    }
-
-    const token = authHeader.slice(7);
-    const payload = verifyJWT(token);
-
-    if (!payload || !payload.userId) {
-      return res.status(401).json({ error: 'Token inválido' });
-    }
-
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ error: 'Contraseñas requeridas' });
-    }
-
-    if (newPassword.length < 6) {
-      return res.status(400).json({ error: 'Mínimo 6 caracteres' });
-    }
-
-    // Get user
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('id, password_hash')
-      .eq('id', payload.userId)
-      .single();
-
-    if (userError || !user) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    // Verify current password
-    const passwordMatch = await comparePassword(currentPassword, user.password_hash);
-    if (!passwordMatch) {
-      return res.status(401).json({ error: 'Contraseña actual incorrecta' });
-    }
-
-    // Hash and update new password
-    const newPasswordHash = await hashPassword(newPassword);
-    const { error: updateError } = await supabase
-      .from('users')
-      .update({ password_hash: newPasswordHash, updated_at: new Date().toISOString() })
-      .eq('id', payload.userId);
-
-    if (updateError) {
-      console.error('Password update error:', updateError);
-      return res.status(500).json({ error: 'Error al actualizar' });
-    }
-
-    res.json({ success: true, message: 'Contraseña actualizada' });
-  } catch (err) {
-    console.error('Change password error:', err);
-    res.status(500).json({ error: err.message });
+  const token = authHeader.slice(7);
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data?.user) {
+    return { error: 'Token inválido o expirado', status: 401 };
   }
-});
+
+  return { user: data.user };
+}
+
+async function requireAdmin(req) {
+  const auth = await requireAuth(req);
+  if (auth.error) return auth;
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', auth.user.id)
+    .single();
+
+  if (profile?.role !== 'admin') {
+    return { error: 'Se requiere rol admin', status: 403 };
+  }
+
+  return auth;
+}
 
 // ============ ESTUDIANTES ROUTES ============
 
@@ -146,7 +83,7 @@ app.get('/api/estudiantes', async (req, res) => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    res.json(students || []);
+    res.json({ data: students || [] });
   } catch (err) {
     console.error('GET estudiantes error:', err);
     res.status(500).json({ error: err.message });
@@ -156,9 +93,9 @@ app.get('/api/estudiantes', async (req, res) => {
 // POST create estudiante
 app.post('/api/estudiantes', async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ error: 'No autorizado' });
+    const auth = await requireAdmin(req);
+    if (auth.error) {
+      return res.status(auth.status).json({ error: auth.error });
     }
 
     const validation = validateCreate(req.body);
@@ -181,7 +118,7 @@ app.post('/api/estudiantes', async (req, res) => {
     }
 
     const uiData = toUiModel(data[0]);
-    res.status(201).json(uiData);
+    res.status(201).json({ data: uiData });
   } catch (err) {
     console.error('POST estudiante error:', err);
     res.status(500).json({ error: err.message });
@@ -202,7 +139,7 @@ app.get('/api/estudiantes/:id', async (req, res) => {
     }
 
     const uiData = toUiModel(data);
-    res.json(uiData);
+    res.json({ data: uiData });
   } catch (err) {
     console.error('GET one error:', err);
     res.status(500).json({ error: err.message });
@@ -212,9 +149,9 @@ app.get('/api/estudiantes/:id', async (req, res) => {
 // PUT update estudiante
 app.put('/api/estudiantes/:id', async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ error: 'No autorizado' });
+    const auth = await requireAdmin(req);
+    if (auth.error) {
+      return res.status(auth.status).json({ error: auth.error });
     }
 
     const validation = validateUpdate(req.body);
@@ -252,9 +189,9 @@ app.put('/api/estudiantes/:id', async (req, res) => {
 // DELETE estudiante
 app.delete('/api/estudiantes/:id', async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ error: 'No autorizado' });
+    const auth = await requireAdmin(req);
+    if (auth.error) {
+      return res.status(auth.status).json({ error: auth.error });
     }
 
     const { error } = await supabase
@@ -279,15 +216,5 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`✓ Backend running on port ${PORT}`);
-  console.log(`✓ Frontend URL: ${process.env.FRONTEND_URL || 'https://tudominio.edu.co'}`);
+  console.log(`✓ Frontend URL: ${process.env.FRONTEND_URL || 'https://ifecolombia.edu.co'}`);
 });
-
-// Helper function to generate JWT (using a simple approach)
-async function generateJWT(payload) {
-  // In production, use a proper JWT library
-  // For now, using a simple base64 encoding
-  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const body = btoa(JSON.stringify(payload));
-  const signature = btoa('dummy-signature'); // Replace with actual HMAC in production
-  return `${header}.${body}.${signature}`;
-}

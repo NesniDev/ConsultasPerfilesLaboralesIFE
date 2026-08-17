@@ -13,7 +13,6 @@ import cors from 'cors';
 import { supabase } from './src/lib/supabase.js';
 import { json } from './src/lib/http.js';
 import { validateCreate, validateUpdate } from './src/lib/validation.js';
-import { toApiPayload, toUiModel } from './src/lib/mapping.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -109,11 +108,14 @@ app.post('/api/estudiantes', async (req, res) => {
       return res.status(400).json({ error: validation.error });
     }
 
-    const payload = toApiPayload(req.body);
-
+    // req.body already arrives in DB row shape — src/scripts/store.js maps
+    // the UI model to it client-side before calling the API. Re-mapping it
+    // here with toApiPayload (which expects the UI model shape: nombres/
+    // apellidos/fechaInicio) would overwrite full_name, fecha_inicio,
+    // fecha_fin and meses with undefined.
     const { data, error } = await supabase
       .from('Estudiantes')
-      .insert([payload])
+      .insert([req.body])
       .select();
 
     if (error) {
@@ -123,8 +125,9 @@ app.post('/api/estudiantes', async (req, res) => {
       throw error;
     }
 
-    const uiData = toUiModel(data[0]);
-    res.status(201).json({ data: uiData });
+    // Return the raw row — src/scripts/store.js applies its own UI mapping
+    // to whatever comes back from the API, same as it does for GET /list.
+    res.status(201).json({ data: data[0] });
   } catch (err) {
     console.error('POST estudiante error:', err);
     res.status(500).json({ error: err.message });
@@ -144,8 +147,7 @@ app.get('/api/estudiantes/:id', async (req, res) => {
       return res.status(404).json({ error: 'No encontrado' });
     }
 
-    const uiData = toUiModel(data);
-    res.json({ data: uiData });
+    res.json({ data });
   } catch (err) {
     console.error('GET one error:', err);
     res.status(500).json({ error: err.message });
@@ -165,11 +167,14 @@ app.put('/api/estudiantes/:id', async (req, res) => {
       return res.status(400).json({ error: validation.error });
     }
 
-    const payload = toApiPayload(req.body);
-
+    // Same reasoning as POST: req.body is already DB row shape (see
+    // src/scripts/store.js). Re-mapping via toApiPayload silently dropped
+    // full_name/fecha_inicio/fecha_fin/meses (undefined keys are omitted
+    // by JSON, so PostgREST just left those columns unchanged on update —
+    // no error, but the edit silently didn't save).
     const { data, error } = await supabase
       .from('Estudiantes')
-      .update(payload)
+      .update(req.body)
       .eq('id', req.params.id)
       .select();
 
@@ -184,8 +189,11 @@ app.put('/api/estudiantes/:id', async (req, res) => {
       return res.status(404).json({ error: 'No encontrado' });
     }
 
-    const uiData = toUiModel(data[0]);
-    res.json(uiData);
+    // Same as POST: return the raw row, wrapped like every other response.
+    // (This used to return the bare object instead of { data }, so
+    // StudentApi.update()'s `payload.data` read came back undefined and
+    // crashed the UI right after a successful save.)
+    res.json({ data: data[0] });
   } catch (err) {
     console.error('PUT error:', err);
     res.status(500).json({ error: err.message });

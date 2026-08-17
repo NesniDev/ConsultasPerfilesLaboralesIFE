@@ -456,7 +456,7 @@ class App {
 
     try {
       if (!window.supabaseAuth) {
-        console.error('Supabase Auth not available');
+        if (window.isDevelopment) console.error('Supabase Auth not available');
         throw new Error('generic');
       }
 
@@ -466,8 +466,8 @@ class App {
       });
 
       if (error) {
-        // Log real error for debugging
-        console.error('Auth error:', error.message);
+        // Log real error only in development
+        if (window.isDevelopment) console.error('Auth error:', error.message);
         throw new Error('generic');
       }
 
@@ -476,12 +476,13 @@ class App {
       this.showToast('¡Sesión iniciada correctamente!', 'success');
       setTimeout(() => window.location.reload(), 800);
     } catch (err) {
-      // Show generic message to user, log real error in console
+      // Show generic message to user
       const userMessage = err.message === 'generic'
         ? 'Email o contraseña incorrectos'
         : 'Ocurrió un error. Intenta de nuevo.';
 
-      if (err.message !== 'generic') {
+      // Log real error only in development
+      if (err.message !== 'generic' && window.isDevelopment) {
         console.error('Login error:', err.message);
       }
 

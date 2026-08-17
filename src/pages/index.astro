@@ -38,6 +38,9 @@ import '../styles/dashboard.css'
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
   <script is:inline>
+    // Detect development environment
+    window.isDevelopment = new URL(window.location.href).hostname === 'localhost';
+
     // Initialize Supabase Auth with retry logic
     window.initSupabaseAuth = function() {
       const SUPABASE_URL = "https://zjjcsmcojstgpfnircnb.supabase.co";
@@ -51,10 +54,10 @@ import '../styles/dashboard.css'
       try {
         const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         window.supabaseAuth = client.auth;
-        console.log('✓ Supabase Auth initialized');
+        if (window.isDevelopment) console.log('✓ Supabase Auth initialized');
         return true;
       } catch (err) {
-        console.error('Failed to initialize Supabase:', err);
+        if (window.isDevelopment) console.error('Failed to initialize Supabase:', err);
         return false;
       }
     };

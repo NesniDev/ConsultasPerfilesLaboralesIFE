@@ -1,0 +1,10 @@
+# Los archivos de esta carpeta no tienen hash en el nombre (a diferencia de
+# los assets que genera Astro en _astro/), así que el navegador necesita
+# revalidar en cada visita en vez de confiar en una copia cacheada por días.
+# Sin esto, cPanel sirve Cache-Control: public, max-age=604800 por defecto
+# y cada deploy queda invisible para quien ya visitó el sitio.
+<IfModule mod_headers.c>
+  <FilesMatch "\.js$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>

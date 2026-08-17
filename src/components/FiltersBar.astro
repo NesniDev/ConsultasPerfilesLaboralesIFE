@@ -7,9 +7,11 @@
     <span class="filter-label">Documento:</span>
     <input
       type="text"
+      inputmode="numeric"
+      pattern="[0-9]*"
       class="filter-input"
       placeholder="Número de documento..."
-      oninput="app.handleFilter('documento', this.value)"
+      oninput="this.value = this.value.replace(/\D/g, ''); app.handleFilter('documento', this.value)"
     />
   </div>
 </div>

@@ -16,7 +16,6 @@ export function toUiModel(row) {
     fechaFinalizacion: row.fecha_fin,
     mesesDuracion: row.meses,
     consecutivo: row.consecutivo,
-    tipoDocumento: row.tipo_documento || 'CC',
     createdAt: row.created_at
   };
 }
@@ -36,7 +35,6 @@ export function toApiPayload(uiModel) {
     fecha_inicio: uiModel.fechaInicio,
     fecha_fin: uiModel.fechaFinalizacion,
     meses: uiModel.mesesDuracion,
-    consecutivo: uiModel.consecutivo,
-    tipo_documento: uiModel.tipoDocumento || 'CC'
+    consecutivo: uiModel.consecutivo
   };
 }
